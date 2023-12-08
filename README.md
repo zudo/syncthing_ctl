@@ -6,7 +6,7 @@ Inspired by <https://docs.syncthing.net/users/autostart.html#autostart-windows-s
 
 ## Starting Syncthing automatically on Windows
 
-This program requires that the [Syncthing](https://github.com/syncthing/syncthing) binary (`syncthing.exe`) is located at `C:\syncthing\syncthing.exe`. For a different location, specify with `--path=C:\path\to\syncthing.exe`.
+This program assumes that the [Syncthing](https://github.com/syncthing/syncthing) binary (`syncthing.exe`) is located at `C:\syncthing\syncthing.exe`. For a different location, specify with `--path=C:\path\to\syncthing.exe`.
 
 ```sh
 syncthing enable
