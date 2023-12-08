@@ -1,0 +1,21 @@
+[package]
+name = "syncthing_ctl"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "syncthing"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.4.11", features = ["derive"] }
+dirs = "5.0.1"
+lazy_static = "1.4.0"
+winapi = { version = "0.3.9", features = [
+    "winbase",
+    "tlhelp32",
+    "processthreadsapi",
+    "handleapi",
+] }
