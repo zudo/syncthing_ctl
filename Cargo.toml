@@ -10,7 +10,7 @@ name = "syncthing"
 path = "src/main.rs"
 
 [dependencies]
-clap = { version = "4.2", features = ["derive"] }
+clap = { version = "=4.2", features = ["derive"] }
 colored = "2.0.4"
 dirs = "5.0.1"
 lazy_static = "1.4.0"
