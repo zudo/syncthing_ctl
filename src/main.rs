@@ -81,16 +81,16 @@ fn main() {
             }
         }
         Commands::Status => {
+            if STARTUP.exists() {
+                println!("Loaded: {}", "enabled".green());
+            } else {
+                println!("Loaded: {}", "disabled".yellow());
+            }
             let processes = find_processes_by_name("syncthing.exe");
             if processes.is_empty() {
                 println!("Active: {}", "inactive (dead)");
             } else {
                 println!("Active: {}", "active (running)".green());
-            }
-            if STARTUP.exists() {
-                println!("Loaded: {}", "enabled".green());
-            } else {
-                println!("Loaded: {}", "disabled".yellow());
             }
         }
     }
