@@ -1,5 +1,6 @@
 use clap::Parser;
 use clap::Subcommand;
+use colored::*;
 use lazy_static::lazy_static;
 use std::ffi::CStr;
 use std::ffi::CString;
@@ -46,6 +47,7 @@ enum Commands {
     Stop,
     Enable(Start),
     Disable,
+    Status,
 }
 fn main() {
     let cli = Cli::parse();
@@ -54,8 +56,7 @@ fn main() {
             let mut command = Command::new(path);
             command.args(args);
             command.creation_flags(CREATE_NO_WINDOW);
-            let child = command.spawn().expect("Process failed to start");
-            println!("Process started with PID: {}", child.id());
+            command.spawn().expect("Process failed to start");
         }
         Commands::Stop => {
             for process in find_processes_by_name("syncthing.exe") {
@@ -73,14 +74,23 @@ fn main() {
             let mut file = File::create(&*STARTUP).expect("Failed to create .bat file");
             file.write_all(content.as_bytes())
                 .expect("Failed to write to .bat file");
-            println!("Startup enabled.");
         }
         Commands::Disable => {
             if STARTUP.exists() {
                 fs::remove_file(&*STARTUP).expect("Failed to remove .bat file");
-                println!("Startup disabled.");
+            }
+        }
+        Commands::Status => {
+            let processes = find_processes_by_name("syncthing.exe");
+            if processes.is_empty() {
+                println!("Active: {}", "inactive (dead)");
             } else {
-                println!("Startup script not found.");
+                println!("Active: {}", "active (running)".green());
+            }
+            if STARTUP.exists() {
+                println!("Loaded: {}", "enabled".green());
+            } else {
+                println!("Loaded: {}", "disabled".yellow());
             }
         }
     }
@@ -119,5 +129,4 @@ pub fn stop_process(pid: u32) {
             CloseHandle(process_handle);
         }
     }
-    println!("Stopping process with PID: {}", pid);
 }
