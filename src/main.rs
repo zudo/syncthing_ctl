@@ -33,25 +33,24 @@ struct Cli {
     #[clap(subcommand)]
     command: Commands,
 }
+#[derive(Parser)]
+pub struct Start {
+    #[clap(long, default_value = "C:\\syncthing\\syncthing.exe")]
+    path: String,
+    #[clap(last = true)]
+    args: Vec<String>,
+}
 #[derive(Subcommand)]
 enum Commands {
-    Start {
-        #[clap(long, default_value = "C:\\syncthing\\syncthing.exe")]
-        path: String,
-        #[clap(last = true)]
-        args: Vec<String>,
-    },
+    Start(Start),
     Stop,
-    Enable {
-        #[clap(last = true)]
-        args: Vec<String>,
-    },
+    Enable(Start),
     Disable,
 }
 fn main() {
     let cli = Cli::parse();
     match cli.command {
-        Commands::Start { path, args } => {
+        Commands::Start(Start { path, args }) => {
             let mut command = Command::new(path);
             command.args(args);
             command.creation_flags(CREATE_NO_WINDOW);
@@ -63,12 +62,14 @@ fn main() {
                 stop_process(process.th32ProcessID);
             }
         }
-        Commands::Enable { args } => {
-            let content = if args.is_empty() {
-                format!("syncthing start")
-            } else {
-                format!("syncthing start -- {}", args.join(" "))
-            };
+        Commands::Enable(Start { path, args }) => {
+            let mut content = "syncthing start".to_string();
+            if !path.is_empty() {
+                content = format!("{} --path {}", content, path);
+            }
+            if !args.is_empty() {
+                content = format!("{} -- {}", content, args.join(" "));
+            }
             let mut file = File::create(&*STARTUP).expect("Failed to create .bat file");
             file.write_all(content.as_bytes())
                 .expect("Failed to write to .bat file");
