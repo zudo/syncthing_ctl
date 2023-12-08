@@ -87,7 +87,13 @@ fn main() {
                 println!("Loaded: {}", "disabled".yellow());
             }
             let processes = find_processes_by_name("syncthing.exe");
-            if processes.is_empty() {
+            let pid = std::process::id();
+            if processes
+                .iter()
+                .filter(|process| process.th32ProcessID != pid)
+                .count()
+                == 0
+            {
                 println!("Active: {}", "inactive (dead)");
             } else {
                 println!("Active: {}", "active (running)".green());
